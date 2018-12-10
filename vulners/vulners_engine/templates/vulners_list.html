@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+{% block title %}
+Vulners Search
+{% endblock %}
+
+{% block content %}
+
+<p>Welcome. This is a very basic Django website.</p>
+<h2>List Vulners: </h2>
+
+{# for vulner in vulners_list #}
+
+<div class="card mt-5 ml-4">
+    <a href="http://vk.com/{{ friend.0.screen_name }}"><img class="card-img-top" src="{{ vulner.0.photo_200 }}"
+                                               alt="{{ vulner.0.photo_200 }}"></a>
+    <div class="card">
+        <h5 class="card-title text-center">{{ vulner.0.first_name }} {{ vulner.0.last_name }}</h5>
+        <p class="card-text text-center">Country: {{ vulner.0.country.title }}</p>
+        <p class="card-text text-center">City: {{ vulner.0.city.title }}</p>
+
+    </div>
+</div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Vendor</th>
+      <th scope="col">CVE/JVN</th>
+      <th scope="col">Published</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Jacob</td>
+      <td>Thornton</td>
+      <td>@fat</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td colspan="2">Larry the Bird</td>
+      <td>@twitter</td>
+    </tr>
+  </tbody>
+</table>
+{# endfor #}
+
+{% endblock %}
