@@ -6,13 +6,15 @@ import requests
 import json
 
 
-def get_vulners_info(search_param):
+def get_vulners_info(vendor, vulner):
     params = {
-        'query': 'type:{}'.format(search_param)
+        'query': 'type:{}'.format(vendor),
+        'id': vulner
 
     }
     vulners = requests.get(
         'https://vulners.com/api/v3/search/lucene/', params=params).json()
+
     return  vulners #json.loads(vulners)
 
 
@@ -21,13 +23,23 @@ class VulnersListView(generic.ListView):
 
 
     def get(self, request):
-        form = FilterForm()
-        vulners = get_vulners_info('debian')
+        form = FilterForm(request.GET or None)
+        vendor = None
+        vulner = None
+        print(form)
+        if form.is_valid():
+            filters = form.cleaned_data
+            print('FILTERS ARE: {}'.format(filters))
+            vendor = filters['vendor']
+            vulner = filters['vulner']
+        print(vendor)
+        print(vulner)
+        vulners = get_vulners_info(vendor, vulner)
         print(vulners['data']['search'][0]['_source']['id'])
         vln_lst = []
         for i in vulners['data']['search']:
             vln_lst.append(i['_source'])
-        print(vln_lst[0])
+        #print(vln_lst[0])
         return render(request, 'vulners_list.html', context={'form': form, 'vulners_list': vln_lst})
 
     # def post(self, request):
