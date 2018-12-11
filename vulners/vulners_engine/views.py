@@ -28,44 +28,38 @@ class VulnersListView(generic.ListView):
         increment = 20
         vendor = None
         vulner = None
-        # skip = 0
-        # skip += increment
-        #print('SKIP {}'.format(skip))
-        try:
-            skip = int(request.GET['skip_next'])
-            if int(request.GET['skip_next']):
-                skip += increment
-            else:
-                skip -= increment
-            # print('HERE_1')
-            # print('SKIP {}'.format(skip))
-            # skip += increment
-            # print('HERE_2')
-            # print('SKIP {}'.format(skip))
-            # print(type(skip))
-            
-        except KeyError:
+        # if not vendor:
+        #     return render(request, 'vulners_list.html', context={'form': form})
+        # try:
+        if request.GET.get('skip', 0):
+            skip = int(request.GET.get('skip', 0))
+            skip += increment
+            # else:
+            #     skip = int(request.GET.get('skip', 20))
+            #     skip += increment
+                # int(request.GET['skip_prev'])
+                # skip -= increment
+        else: # KeyError:
+            # print(request.GET, 'HERERERE')
+            skip = int(request.GET.get('skip_prev', 0))
+                # skip = 0
+            # else:
+                # skip = int(request.GET.get('skip_prev', 0))
+            skip -= increment
+            if skip <= 0:
                 skip = 0
+        # except MultiValueDictKeyError:
+        #     skip = 0
         print(form)
-        # if request.GET['skip'][0]:
+        print('{} {} {}'.format(vendor, vulner, skip))
         #     print('SKIP FIRST {}'.format(request.GET['skip'][0]))
         if form.is_valid():
             filters = form.cleaned_data
             print('FILTERS ARE: {}'.format(filters))
             vendor = filters['vendor']
             vulner = filters['vulner']
-            # try:
-            #     skip = int(request.GET['skip'][0])
-            #     skip += increment
-            #     print('SKIP {}'.format(skip))
-            #     print(type(skip))
-            # except KeyError:
-            #     skip = 0
-        print(vendor)
-        print(vulner)
-        # skip += increment
         vulners = get_vulners_info(vendor, vulner, skip)
-        #print(vulners['data']['search'][0]['_source']['id'])
+        # print(vulners['data']['search'][0]['_source']['id'])
         vln_lst = []
         if vulners:
             for i in vulners['data']['search']:

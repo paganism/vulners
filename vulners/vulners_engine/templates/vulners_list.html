@@ -13,7 +13,7 @@ Vulners Search
     {% if not vulners_list %}    
     <button type="submit" class="btn btn-primary">Search</button>
     {% else %}
-    <button type="submit" name="skip_next" value="{{ skip }}" class="btn btn-primary">Get Next</button>
+    <button type="submit" name="skip" value="{{ skip }}" class="btn btn-primary">Get Next</button>
     {% if skip > 0 %}
     <button type="submit" name="skip_prev" value="{{ skip }}" class="btn btn-primary">Get Prev</button>
     {% endif %}
