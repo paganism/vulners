@@ -6,10 +6,11 @@ import requests
 import json
 
 
-def get_vulners_info(vendor, vulner):
+def get_vulners_info(vendor, vulner, skip):
     params = {
         'query': 'type:{}'.format(vendor),
-        'id': vulner
+        #'id': vulner,
+        'skip': int(skip)
 
     }
     vulners = requests.get(
@@ -24,23 +25,56 @@ class VulnersListView(generic.ListView):
 
     def get(self, request):
         form = FilterForm(request.GET or None)
+        increment = 20
         vendor = None
         vulner = None
+        # skip = 0
+        # skip += increment
+        #print('SKIP {}'.format(skip))
+        try:
+            skip = int(request.GET['skip_next'])
+            if int(request.GET['skip_next']):
+                skip += increment
+            else:
+                skip -= increment
+            # print('HERE_1')
+            # print('SKIP {}'.format(skip))
+            # skip += increment
+            # print('HERE_2')
+            # print('SKIP {}'.format(skip))
+            # print(type(skip))
+            
+        except KeyError:
+                skip = 0
         print(form)
+        # if request.GET['skip'][0]:
+        #     print('SKIP FIRST {}'.format(request.GET['skip'][0]))
         if form.is_valid():
             filters = form.cleaned_data
             print('FILTERS ARE: {}'.format(filters))
             vendor = filters['vendor']
             vulner = filters['vulner']
+            # try:
+            #     skip = int(request.GET['skip'][0])
+            #     skip += increment
+            #     print('SKIP {}'.format(skip))
+            #     print(type(skip))
+            # except KeyError:
+            #     skip = 0
         print(vendor)
         print(vulner)
-        vulners = get_vulners_info(vendor, vulner)
-        print(vulners['data']['search'][0]['_source']['id'])
+        # skip += increment
+        vulners = get_vulners_info(vendor, vulner, skip)
+        #print(vulners['data']['search'][0]['_source']['id'])
         vln_lst = []
-        for i in vulners['data']['search']:
-            vln_lst.append(i['_source'])
-        #print(vln_lst[0])
-        return render(request, 'vulners_list.html', context={'form': form, 'vulners_list': vln_lst})
+        if vulners:
+            for i in vulners['data']['search']:
+                vln_lst.append(i['_source'])
+        print(request.GET)
+        print('SKIP {}'.format(skip))
+        return render(request, 'vulners_list.html', context={'form': form,
+                        'vulners_list': vln_lst,
+                        'skip': skip})
 
     # def post(self, request):
     #     bound_form = PostForm(request.POST)
