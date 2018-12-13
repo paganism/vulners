@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .forms import FilterForm
 from django.views import generic
+from .models import Vulner
 
 import requests
 import json
@@ -10,21 +11,16 @@ def get_vulners_info(vendor=None, vulner=None, skip=None):
     params = {
         'query': 'type:{}'.format(vendor),
         'id': '"{}"'.format(vulner),
-        'skip': int(skip)
+        'skip': skip
 
     }
     vulners = requests.get(
         'https://vulners.com/api/v3/search/lucene/', params=params)
     print(vulners.url)
-
-    return  vulners.json() #json.loads(vulners)
-
-
+    return vulners.json()
 
 
 class VulnersListView(generic.ListView):
-    # template_name = 'vulners_engine/vulners_list.html'
-
 
     def get(self, request):
         form = FilterForm(request.GET or None)
@@ -54,13 +50,27 @@ class VulnersListView(generic.ListView):
         if vulners:
             for i in vulners['data']['search']:
                 vln_lst.append(i['_source'])
-        return render(request, 'vulners_list.html', context={'form': form,
-                        'vulners_list': vln_lst,
-                        'skip': skip})
+        return render(request, 'vulners_list.html', context={
+                                    'form': form,
+                                    'vulners_list': vln_lst,
+                                    'skip': skip})
 
-    # def post(self, request):
-    #     bound_form = PostForm(request.POST)
-    #     if bound_form.is_valid():
-    #         new_post = bound_form.save()
-    #         return redirect(new_post)
-    #     return render(request, 'blog/post_create.html', context={'form':bound_form})
+    def post(self, request):
+        print('HERE_POST')
+        form = FilterForm(request.POST)
+        if form.is_valid():
+            filters = form.cleaned_data
+            print('FILTERS ARE: {}'.format(filters))
+            vendor = filters['vendor']
+            vulner = filters['vulner']
+        vulners = get_vulners_info(vendor, vulner)
+        vln_lst = []
+        if vulners:
+            for i in vulners['data']['search']:
+                vln_lst.append(i['_source'])
+                print(i['_source'])
+                Vulner(vendor=i['_source']['type'], 
+                                vulner=i['_source']['id'], 
+                                description=i['_source']['description'], 
+                                published=i['_source']['published']).save()
+        return render(request, 'vulners_list.html', context={'form': form})

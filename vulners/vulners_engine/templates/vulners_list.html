@@ -17,17 +17,23 @@ Vulners Search
     {% if skip > 0 %}
     <button type="submit" name="skip_prev" value="{{ skip }}" class="btn btn-primary">Get Prev</button>
     {% endif %}
+    
+    
     {{ skip }}
     {% endif %}
+{% if vulners_list %}
 </form>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger text-right">Save to local DB</button>
+  </form>
 <br>
-
+{% endif %}
 
 {% if vulners_list %}
 <table class="table table-hover">
   <thead>
     <tr>
-      <th scope="col">#</th>
       <th scope="col">Vendor</th>
       <th scope="col">Vulner</th>
       <th scope="col">Description</th>
@@ -37,7 +43,6 @@ Vulners Search
   <tbody>
       {% for vulner in vulners_list %}
     <tr>
-      <th scope="row"></th>
       <td>{{ vulner.type}}</td>
       <td>{{ vulner.id}}</td>
       <td>{{ vulner.description| truncatewords:10}}</td>
@@ -46,12 +51,7 @@ Vulners Search
       {% endfor %}
   </tbody>
 </table>
-<br>
-<form method="GET">
-  <button type="submit" name="skip" value="20" class="btn btn-primary">Get more</button>
-</form>
-<button type="submit" class="btn btn-primary">Save to Local DB</button>
-<br>
+
 
 {% else %}
 <p>Get request to see some vulners</p>
