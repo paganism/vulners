@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from .forms import FilterForm
 from django.views import generic
-from .models import Vulner
-from django.core.exceptions import ObjectDoesNotExist
 
+from .models import Vulner
+from .forms import FilterForm
 from .utils import get_vulners_info
 from .utils import get_skip_to_paginate
 from .utils import get_form_request_params
@@ -14,14 +13,7 @@ from datetime import datetime
 class VulnersListView(generic.ListView):
     def get(self, request):
         form = FilterForm(request.GET or None)
-        vendor = None
-        vulner = None
-        skip = get_skip_to_paginate(request)
-        if form.is_valid():
-            filters = form.cleaned_data
-            print('FILTERS ARE: {}'.format(filters))
-            vendor = filters['vendor']
-            vulner = filters['vulner']
+        vendor, vulner, skip = get_form_request_params(form, request)
         vulners = get_vulners_info(vendor, vulner, skip)
         if vulners:
             vulners_list = [vulner['_source'] for vulner in vulners['data']['search']]
@@ -33,7 +25,6 @@ class VulnersListView(generic.ListView):
     def post(self, request):
         form = FilterForm(request.GET or None)
         vendor, vulner, skip = get_form_request_params(form, request)
-        print('VENDOR {}, VULNER {}, SKIP {}'.format(vendor, vulner, skip))
         vulners = get_vulners_info(vendor, vulner, skip)
         vulners_list = []
         if vulners:

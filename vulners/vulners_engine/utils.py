@@ -1,12 +1,4 @@
-from django.shortcuts import render
-from django.shortcuts import get_object_or_404
-from django.shortcuts import redirect
-from django.urls import reverse
-from .forms import FilterForm
-from .models import Vulner
-
 import requests
-import json
 
 
 def get_vulners_info(vendor=None, vulner=None, skip=None):
@@ -17,7 +9,6 @@ def get_vulners_info(vendor=None, vulner=None, skip=None):
     }
     vulners = requests.get(
         'https://vulners.com/api/v3/search/lucene/', params=params)
-    print(vulners.url)
     return vulners.json()
 
 
@@ -40,7 +31,6 @@ def get_form_request_params(form, request):
     skip = get_skip_to_paginate(request)
     if form.is_valid():
         filters = form.cleaned_data
-        print('FILTERS ARE: {}'.format(filters))
         vendor = filters['vendor']
         vulner = filters['vulner']
     return [vendor, vulner, skip]

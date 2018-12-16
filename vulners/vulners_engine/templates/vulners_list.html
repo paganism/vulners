@@ -5,112 +5,55 @@ Vulners Search
 
 {% block content %}
 
-<p>Welcome. This is a very basic Django website.</p>
-<h2>List Vulners: </h2>
-
-<form method="GET">
-        {{ form.as_p }}
-    {% if not vulners_list %}    
+<h2>Vulners Search: </h2>
+<form style='float: left' method="GET">
+    {{ form.as_p }}
+    {% if not vulners_list %}
     <button type="submit" class="btn btn-primary">Search</button>
     {% else %}
     <button type="submit" name="skip" value="{{ skip }}" class="btn btn-primary">Get Next</button>
     {% if skip > 0 %}
     <button type="submit" name="skip_prev" value="{{ skip }}" class="btn btn-primary">Get Prev</button>
     {% endif %}
-    
-    
+
+
     {{ skip }}
     {% endif %}
-{% if vulners_list %}
+    {% if vulners_list %}
 </form>
-<form method="post">
+<br>
+<form style='float: right' method="POST">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger text-right">Save to local DB</button>
-  </form>
+</form>
 <br>
 {% endif %}
 
 {% if vulners_list %}
 <table class="table table-hover">
-  <thead>
+    <thead>
     <tr>
-      <th scope="col">Vendor</th>
-      <th scope="col">Vulner</th>
-      <th scope="col">Description</th>
-      <th scope="col">Published</th>
+        <th scope="col">Vendor</th>
+        <th scope="col">Vulner</th>
+        <th scope="col">Description</th>
+        <th scope="col">Published</th>
     </tr>
-  </thead>
-  <tbody>
-      {% for vulner in vulners_list %}
+    </thead>
+    <tbody>
+    {% for vulner in vulners_list %}
     <tr>
-      <td>{{ vulner.type}}</td>
-      <td>{{ vulner.id}}</td>
-      <td>{{ vulner.description| truncatewords:10}}</td>
-      <td>{{ vulner.published }}</td>
+        <td>{{ vulner.type}}</td>
+        <td>{{ vulner.id}}</td>
+        <td>{{ vulner.description| truncatewords:10}}</td>
+        <td>{{ vulner.published }}</td>
     </tr>
-      {% endfor %}
-  </tbody>
+    {% endfor %}
+    </tbody>
 </table>
 
 
 {% else %}
 <p>Get request to see some vulners</p>
 {% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- <table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Vendor</th>
-      <th scope="col">CVE/JVN</th>
-      <th scope="col">Description</th>
-      <th scope="col">Published</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-      <td>date</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-      <td>date</td>
-    </tr>
-
-    <tr>
-      <th scope="row">3</th>
-      <td colspan="2">Larry the Bird</td>
-      <td>@twitter</td>
-      <td>date</td>
-    </tr>
-  </tbody>
-</table>
-{# endfor #} -->
 
 {% endblock %}
