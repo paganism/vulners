@@ -8,6 +8,8 @@ from .utils import get_vulners_info
 from .utils import get_skip_to_paginate
 from .utils import get_form_request_params
 
+from datetime import datetime
+
 
 class VulnersListView(generic.ListView):
     def get(self, request):
@@ -42,7 +44,7 @@ class VulnersListView(generic.ListView):
                             'vulner': vulner['_source']['id'],
                             'vendor': vulner['_source']['type'],
                             'description': vulner['_source']['description'],
-                            'published': vulner['_source']['published']
+                            'published': datetime.strptime(vulner['_source']['published'], '%Y-%m-%dT%H:%M:%S')
                         })
         return render(request, 'vulners_list.html', context={
                                     'form': form,
