@@ -6,8 +6,22 @@ Vulners Search
 {% block content %}
 
 <h2>Vulners Search: </h2>
-<form style='float: left' method="GET">
-    {{ form.as_p }}
+<form  action="{% url 'vulners' %}" style='float: left' method="GET">
+    <div class="form-horizontal">
+    {% for field in form %}
+            <div class="form-group">
+                {% if field.errors %}
+                    <div class=".alert.alert-danger">
+                        {{ field.errors }}
+                    </div>
+                {% endif %}
+
+                {{ field.label }}
+                {{ field }}
+
+            </div>
+        {% endfor %}
+
     {% if not vulners_list %}
     <button type="submit" class="btn btn-primary">Search</button>
     {% else %}
@@ -16,10 +30,9 @@ Vulners Search
     <button type="submit" name="skip_prev" value="{{ skip }}" class="btn btn-primary">Get Prev</button>
     {% endif %}
 
-
-    {{ skip }}
     {% endif %}
     {% if vulners_list %}
+    </div>
 </form>
 <br>
 <form style='float: right' method="POST">
